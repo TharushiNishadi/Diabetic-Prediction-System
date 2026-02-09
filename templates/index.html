@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Diabetes Diagnosis</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #4d585554; display: flex; justify-content: center; padding: 20px; }
+        .card { background: rgba(118, 58, 58, 0.388); padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; }
+        h2 { color: #2c3e50; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #34495e; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; background: #27ae5fc7; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        #result { margin-top: 20px; text-align: center; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Diabetes Predictor</h2>
+    <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="age" placeholder="e.g. 45">
+    </div>
+    <div class="form-group">
+        <label>BMI</label>
+        <input type="number" id="bmi" placeholder="e.g. 28.5">
+    </div>
+    <div class="form-group">
+        <label>Systolic Blood Pressure</label>
+        <input type="number" id="systolic_bp" placeholder="e.g. 120">
+    </div>
+    <button onclick="sendPrediction()">Analyze Results</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    async function sendPrediction() {
+    const data = {
+        age: document.getElementById('age').value,
+        bmi: document.getElementById('bmi').value,
+        systolic_bp: document.getElementById('systolic_bp').value
+    };
+
+    const response = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+
+    const res = await response.json();
+    
+    // This must match the keys 'result' and 'confidence' from Python
+    document.getElementById('result').innerText = 
+        `Diagnosis: ${res.result} \n Confidence: ${res.confidence}`;
+    
+    document.getElementById('result').style.color = res.result.includes("Positive") ? "red" : "green";
+}
+</script>
+
+</body>
+</html>
